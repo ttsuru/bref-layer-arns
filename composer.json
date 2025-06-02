@@ -1,0 +1,30 @@
+{
+    "name": "ttsuru/bref-layer-arns",
+    "description": "Resolve latest Bref and extra PHP extension layer ARNs from layers.json",
+    "type": "library",
+    "require": {
+        "php": "^7.4 || ^8.0",
+        "composer-runtime-api": "^2.0",
+        "bref/bref": "^2.4"
+    },
+    "suggest": {
+        "bref/extra-php-extensions": "Provides additional layers such as gd, imagick, etc."
+    },
+    "autoload": {
+        "psr-4": {
+            "Bref\\LayerArns\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Bref\\LayerArns\\Tests\\": "tests/"
+        }
+    },
+    "bin": [
+        "bin/bref-layer-arns"
+    ],
+    "require-dev": {
+        "phpunit/phpunit": "^9.0",
+        "bref/extra-php-extensions": "^1.8"
+    }
+}

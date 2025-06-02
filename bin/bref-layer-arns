@@ -1,0 +1,24 @@
+#!/usr/bin/env php
+<?php
+
+require __DIR__ . '/../vendor/autoload.php';
+
+use Bref\LayerArns\Resolver;
+
+$input = $argv[1] ?? '';
+$region = $argv[2] ?? getenv('AWS_REGION') ?: 'ap-northeast-1';
+
+if (!$input) {
+    fwrite(STDERR, "Usage: bref-layer-arns <comma-separated-layer-list> [region]\n");
+    exit(1);
+}
+
+$layers = array_map('trim', explode(',', $input));
+
+try {
+    $arns = Resolver::resolve($layers, $region);
+    echo implode(',', $arns) . "\n";
+} catch (Throwable $e) {
+    fwrite(STDERR, "Error: {$e->getMessage()}\n");
+    exit(1);
+}
