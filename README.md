@@ -73,11 +73,7 @@ You can use the resolved ARNs in your `template.yaml` with `Parameters` and `Glo
 ```
 Globals:
   Function:
-    Layers: !Split
-      - ","
-      - !Join
-        - ","
-        - !Ref BrefLayerArns
+    Layers: !Ref BrefLayerArns
 
 Parameters:
   BrefLayerArns:
@@ -92,10 +88,6 @@ And pass in the latest ARNs dynamically from GitHub Actions:
 ```
 sam deploy --parameter-overrides BrefLayerArns=$(vendor/bin/bref-layer-arns php-84-fpm)
 ```
-
-## License
-
-MIT License – see [LICENSE](LICENSE) for full text.
 
 ## Usage with GitHub Actions
 
@@ -136,3 +128,7 @@ jobs:
           sam deploy \
             --parameter-overrides BrefLayerArns=$BREF_LAYER_ARNS
 ```
+
+## License
+
+MIT License – see [LICENSE](LICENSE) for full text.
