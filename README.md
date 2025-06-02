@@ -126,7 +126,7 @@ jobs:
 
       - name: Resolve Bref Layer ARNs
         run: |
-          BREF_LAYER_ARNS=$(vendor/bin/bref-layer-arns "$BREF_LAYERS")
+          BREF_LAYER_ARNS=$(vendor/bin/bref-layer-arns $BREF_LAYERS)
           if [ -z "$BREF_LAYER_ARNS" ]; then
             echo "Failed to resolve Bref layers." >&2
             exit 1
