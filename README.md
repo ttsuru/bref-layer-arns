@@ -65,6 +65,28 @@ composer install
 vendor/bin/phpunit
 ```
 
+## Usage with AWS SAM
+
+You can use the resolved ARNs in your `template.yaml` with `Parameters` and `Globals` like this:
+
+```
+Globals:
+  Function:
+    Layers:
+      - !Ref BrefLayerArns
+
+Parameters:
+  BrefLayerArns:
+    Type: String
+    Default: arn:aws:lambda:ap-northeast-1:534081306603:layer:php-84-fpm:24
+```
+
+And pass in the latest ARNs dynamically from GitHub Actions:
+
+```
+sam deploy --parameter-overrides BrefLayerArns=$(vendor/bin/bref-layer-arns php-84-fpm)
+```
+
 ## License
 
 MIT License – see [LICENSE](LICENSE) for full text.
