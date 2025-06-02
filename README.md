@@ -67,18 +67,24 @@ vendor/bin/phpunit
 
 ## Usage with AWS SAM
 
-You can use the resolved ARNs in your `template.yaml` with `Parameters` and `Globals` like this:
+
+You can use the resolved ARNs in your `template.yaml` with `Parameters` and `Globals` like this (supporting multiple layers):
 
 ```
 Globals:
   Function:
-    Layers:
-      - !Ref BrefLayerArns
+    Layers: !Split
+      - ","
+      - !Join
+        - ","
+        - !Ref BrefLayerArns
 
 Parameters:
   BrefLayerArns:
-    Type: String
-    Default: arn:aws:lambda:ap-northeast-1:534081306603:layer:php-84-fpm:24
+    Type: CommaDelimitedList
+    Default: >
+      arn:aws:lambda:ap-northeast-1:534081306603:layer:php-84-fpm:24,
+      arn:aws:lambda:ap-northeast-1:403367587399:layer:gd-php-84:2
 ```
 
 And pass in the latest ARNs dynamically from GitHub Actions:
