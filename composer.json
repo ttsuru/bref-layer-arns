@@ -2,6 +2,7 @@
     "name": "ttsuru/bref-layer-arns",
     "description": "Resolve latest Bref and extra PHP extension layer ARNs from layers.json",
     "type": "library",
+    "license": "MIT",
     "require": {
         "php": "^7.4 || ^8.0",
         "composer-runtime-api": "^2.0",
