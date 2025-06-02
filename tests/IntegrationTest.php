@@ -47,4 +47,27 @@ class IntegrationTest extends TestCase
         // 'php-84-fpm' exists, 'no-such-layer' does not
         Resolver::resolve(['php-84-fpm', 'no-such-layer'], 'ap-northeast-1');
     }
+    public function test_resolves_insights_layer()
+    {
+        $layers = ['insights'];
+        $arns = Resolver::resolve($layers, 'ap-northeast-1');
+
+        $this->assertCount(1, $arns);
+        $this->assertMatchesRegularExpression(
+            '/^arn:aws:lambda:ap-northeast-1:580247275435:layer:LambdaInsightsExtension:\d+$/',
+            $arns[0]
+        );
+    }
+
+    public function test_resolves_arm_insights_layer()
+    {
+        $layers = ['arm-insights'];
+        $arns = Resolver::resolve($layers, 'ap-northeast-1');
+
+        $this->assertCount(1, $arns);
+        $this->assertMatchesRegularExpression(
+            '/^arn:aws:lambda:ap-northeast-1:580247275435:layer:LambdaInsightsExtension-Arm64:\d+$/',
+            $arns[0]
+        );
+    }
 }

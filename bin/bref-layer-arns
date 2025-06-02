@@ -13,15 +13,29 @@ if (file_exists(__DIR__ . '/vendor/autoload.php')) {
 
 use Bref\LayerArns\Resolver;
 
-$input = $argv[1] ?? '';
-$region = $argv[2] ?? getenv('AWS_REGION') ?: 'ap-northeast-1';
 
-if (!$input) {
-    fwrite(STDERR, "Usage: bref-layer-arns <comma-separated-layer-list> [region]\n");
+$inputLayers = [];
+$region = getenv('AWS_REGION') ?: null;
+
+foreach (array_slice($argv, 1) as $arg) {
+    if (!str_starts_with($arg, '--') && !isset($region)) {
+        $inputLayers[] = $arg;
+    } elseif (str_starts_with($arg, '--region=')) {
+        $region = explode('=', $arg, 2)[1];
+    }
+}
+
+if (!$region) {
+    fwrite(STDERR, "Error: --region is required or AWS_REGION must be set\n");
     exit(1);
 }
 
-$layers = array_map('trim', explode(',', $input));
+if (empty($inputLayers)) {
+    fwrite(STDERR, "Usage: bref-layer-arns <layer1> <layer2> ... [--region=your-region]\n");
+    exit(1);
+}
+
+$layers = $inputLayers;
 
 try {
     $arns = Resolver::resolve($layers, $region);

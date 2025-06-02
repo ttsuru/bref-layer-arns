@@ -23,21 +23,31 @@ composer require bref/extra-php-extensions
 Use the CLI to output a comma-separated list of ARNs for the specified layers:
 
 ```
-vendor/bin/bref-layer-arns php-84-fpm,gd-php-84 ap-northeast-1
+vendor/bin/bref-layer-arns php-84-fpm gd-php-84 insights --region=ap-northeast-1
 ```
 
 You can omit the region if you set the `AWS_REGION` environment variable:
 
 ```
 export AWS_REGION=ap-northeast-1
-vendor/bin/bref-layer-arns php-84-fpm,gd-php-84
+vendor/bin/bref-layer-arns php-84-fpm gd-php-84 insights
 ```
 
 The output will be something like:
 
 ```
-arn:aws:lambda:ap-northeast-1:534081306603:layer:php-84-fpm:24,arn:aws:lambda:ap-northeast-1:403367587399:layer:gd-php-84:2
+arn:aws:lambda:ap-northeast-1:534081306603:layer:php-84-fpm:24,arn:aws:lambda:ap-northeast-1:403367587399:layer:gd-php-84:2,arn:aws:lambda:ap-northeast-1:580247275435:layer:LambdaInsightsExtension:14
 ```
+
+
+To use ARM64-specific layers, pass `arm-insights` instead of `insights`:
+
+```
+vendor/bin/bref-layer-arns arm-php-84-fpm arm-insights --region=ap-northeast-1
+```
+
+> [!WARNING]
+> `bref/extra-php-extensions` does not provide ARM64 layers. Only x86_64 is supported.
 
 ### PHP API
 
@@ -86,7 +96,7 @@ Parameters:
 And pass in the latest ARNs dynamically from GitHub Actions:
 
 ```
-sam deploy --parameter-overrides BrefLayerArns=$(vendor/bin/bref-layer-arns php-84-fpm)
+sam deploy --parameter-overrides BrefLayerArns=$(vendor/bin/bref-layer-arns php-84-fpm --region=$AWS_REGION)
 ```
 
 ## Usage with GitHub Actions
@@ -98,7 +108,7 @@ Example:
 ```yaml
 env:
   AWS_REGION: ap-northeast-1
-  BREF_LAYERS: php-84-fpm,gd-php-84
+  BREF_LAYERS: php-84-fpm gd-php-84 insights
 
 jobs:
   deploy:
@@ -128,6 +138,14 @@ jobs:
           sam deploy \
             --parameter-overrides BrefLayerArns=$BREF_LAYER_ARNS
 ```
+
+## Changelog
+
+### v1.1.0
+
+- Added support for `insights` and `arm-insights` layers via new `layers-insights.json`
+- Automatically maps these to appropriate `LambdaInsightsExtension` ARNs per region
+- CLI and API updated to support these identifiers transparently
 
 ## License
 

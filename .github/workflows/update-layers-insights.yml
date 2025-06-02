@@ -1,0 +1,38 @@
+name: Update layers-insights.json
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 4 * * 1' # Every Monday at 04:00 UTC
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          tools: composer
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-interaction
+
+      - name: Update layers-insights.json
+        run: ./bin/update-layers-insights
+
+      - name: Commit and create Pull Request
+        uses: peter-evans/create-pull-request@v7
+        with:
+          commit-message: "chore: update layers-insights.json from AWS docs"
+          title: "chore: update layers-insights.json from AWS docs"
+          body: "This PR updates the Lambda Insights layer versions from the official AWS documentation."
+          branch: update/layers-insights
+          delete-branch: true

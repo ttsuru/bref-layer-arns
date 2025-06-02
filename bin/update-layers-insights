@@ -1,0 +1,59 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+require_once __DIR__ . '/../vendor/autoload.php';
+
+use Symfony\Component\DomCrawler\Crawler;
+use Symfony\Component\HttpClient\HttpClient;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
+
+function fetchLayerVersions(HttpClientInterface $client, string $url, string $type): array
+{
+    $response = $client->request('GET', $url);
+    $html = $response->getContent();
+
+    $crawler = new Crawler($html);
+    $table = $crawler->filter('table')->first();
+    $rows = $table->filter('tr');
+
+    $versions = [];
+
+    foreach ($rows as $row) {
+        $cols = (new Crawler($row))->filter('td');
+        if ($cols->count() < 2) {
+            continue;
+        }
+
+        $arnCell = $cols->eq(1);
+        $arn = $arnCell->filter('*')->count() > 0
+            ? trim($arnCell->filter('*')->text())
+            : trim($arnCell->text());
+
+        if (!preg_match('/arn:aws[a-zA-Z-]*:lambda:([a-z0-9-]+):[0-9]+:layer:[^:]+:(\d+)/', $arn, $matches)) {
+            echo "Skipped invalid ARN: $arn\n";
+            continue;
+        }
+        $region = $matches[1];
+        $version = $matches[2];
+        $versions[$region] = $version;
+    }
+
+    return [$type => $versions];
+}
+
+$urls = [
+    ['https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Lambda-Insights-extension-versionsx86-64.html', 'insights'],
+    ['https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Lambda-Insights-extension-versionsARM.html', 'arm-insights'],
+];
+
+$data = [];
+$client = HttpClient::create();
+
+foreach ($urls as [$url, $type]) {
+    $data += fetchLayerVersions($client, $url, $type);
+}
+
+file_put_contents(__DIR__ . '/../layers-insights.json', json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+echo "layers-insights.json successfully updated.\n";
