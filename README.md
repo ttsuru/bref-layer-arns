@@ -96,3 +96,43 @@ sam deploy --parameter-overrides BrefLayerArns=$(vendor/bin/bref-layer-arns php-
 ## License
 
 MIT License – see [LICENSE](LICENSE) for full text.
+
+## Usage with GitHub Actions
+
+You can dynamically resolve and inject the latest Bref Layer ARNs in your GitHub Actions workflow using this tool.
+
+Example:
+
+```yaml
+env:
+  AWS_REGION: ap-northeast-1
+  BREF_LAYERS: php-84-fpm,gd-php-84
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+
+      - name: Install dependencies
+        run: composer install --no-dev
+
+      - name: Resolve Bref Layer ARNs
+        run: |
+          BREF_LAYER_ARNS=$(vendor/bin/bref-layer-arns "$BREF_LAYERS")
+          if [ -z "$BREF_LAYER_ARNS" ]; then
+            echo "Failed to resolve Bref layers." >&2
+            exit 1
+          fi
+          echo "BREF_LAYER_ARNS=$BREF_LAYER_ARNS" >> $GITHUB_ENV
+
+      - name: Deploy with SAM
+        run: |
+          sam deploy \
+            --parameter-overrides BrefLayerArns=$BREF_LAYER_ARNS
+```
