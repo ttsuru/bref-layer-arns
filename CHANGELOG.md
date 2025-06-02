@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.1] - 2025-06-02
+### Fixed
+- Improved argument parsing to support quoted layer strings with spaces (e.g., "php-84-fpm gd-php-84 insights").
+
 ## [1.1.0] - 2025-06-02
 ### Added
 - Support for `insights` and `arm-insights` layer types.

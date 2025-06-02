@@ -35,6 +35,11 @@ if (empty($inputLayers)) {
     exit(1);
 }
 
+// Handle quoted single argument with multiple layers
+if (count($inputLayers) === 1 && str_contains($inputLayers[0], ' ')) {
+    $inputLayers = preg_split('/\s+/', $inputLayers[0]);
+}
+
 $layers = $inputLayers;
 
 try {
