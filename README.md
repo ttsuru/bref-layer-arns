@@ -141,11 +141,7 @@ jobs:
 
 ## Changelog
 
-### v1.1.0
-
-- Added support for `insights` and `arm-insights` layers via new `layers-insights.json`
-- Automatically maps these to appropriate `LambdaInsightsExtension` ARNs per region
-- CLI and API updated to support these identifiers transparently
+See [CHANGELOG.md](CHANGELOG.md) for release history.
 
 ## License
 
