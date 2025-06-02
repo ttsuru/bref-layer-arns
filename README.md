@@ -78,7 +78,7 @@ Globals:
 Parameters:
   BrefLayerArns:
     Type: CommaDelimitedList
-    Default: >
+    Default: >-
       arn:aws:lambda:ap-northeast-1:534081306603:layer:php-84-fpm:24,
       arn:aws:lambda:ap-northeast-1:403367587399:layer:gd-php-84:2
 ```
